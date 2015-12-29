@@ -1,0 +1,18 @@
+---
+- name: ensure the mariadb (aka) mysql packages are installed
+  yum: name={{ item }} state=present
+  with_flattened:
+    - mariadb-server
+    - mariadb
+
+- name: ensure the mariadb service is started and enabled
+  service: name=mariadb state=started enabled=yes
+
+- name: copy the SQL script to create the database users
+  copy: src=setup_access.sql dest=/home/vagrant mode=755
+
+- name: create the database users
+  shell: "mysql -u root < /home/vagrant/setup_access.sql"
+
+- name: remove the create database user SQL script
+  file: path=/home/vagrant/setup_access.sql state=absent

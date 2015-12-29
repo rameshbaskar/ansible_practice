@@ -1,0 +1,36 @@
+---
+- name: ensure the app group exists
+  group: name=app state=present
+
+- name: ensure the app user exists
+  user: name=app groups=app,nobody state=present append=yes
+
+- name: add hostname
+  lineinfile: dest=/etc/hosts regexp="^127\.0\.0\.1 {{ ansible_hostname }}.dev.local" line="127.0.0.1 {{ ansible_hostname }}.dev.local"
+
+- name: ensure the required packages are installed
+  yum: name={{ item }} state=present
+  with_flattened:
+    - libaio
+    - bc
+    - unzip
+    - wget
+    - curl
+    - vim-enhanced
+    - git
+    - cups-devel
+    - file-libs
+    - file-devel
+    - xz
+    - ntpdate
+    - java-1.7.0-openjdk
+    - net-tools
+
+- name: stop and disable ip tables
+  service: name=iptables state=stopped enabled=no
+
+- name: ensure lsb folder exists
+  file: path=/lib/lsb state=directory
+
+- name: copy init-functions
+  copy: src=init-functions dest=/lib/lsb/init-functions mode=755
