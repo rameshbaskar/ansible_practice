@@ -44,6 +44,7 @@ Vagrant.configure(VAGRANT_FILE_VERSION) do |config|
     db.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/vagrant-db.yml"
     end
+    db.vm.network "private_network", ip: "192.168.10.10"
     db.vm.network "forwarded_port", guest: 3306, host: 3306, auto_correct: true
   end
 end
