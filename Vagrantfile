@@ -27,6 +27,8 @@ Vagrant.configure(VAGRANT_FILE_VERSION) do |config|
       when /linux/
         host_cpus = `nproc`.to_i
         host_memory = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024
+      else
+        raise "Unsupported Host OS!!! Please ensure that your OS supports Vagrant."
     end
 
     vb.customize ["modifyvm", :id, "--cpus", (host_cpus / 4)]
